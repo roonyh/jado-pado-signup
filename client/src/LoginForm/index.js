@@ -35,7 +35,7 @@ class LoginForm extends Component {
     return (
       <Form onSubmit={this.handleSubmit} className="login-form">
         <FormItem>
-          {getFieldDecorator('userName', {
+          {getFieldDecorator('username', {
             rules: [{ required: true, message: 'Please input your username!' }],
           })(
             <Input addonBefore={<Icon type="user" />} placeholder="Username" />
