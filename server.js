@@ -1,7 +1,14 @@
-var express = require('express')
-var app = express()
+var express = require('express');
+var bodyParser = require('body-parser')
 
-// respond with "hello world" when a GET request is made to the homepage
-app.get('/', function (req, res) {
-  res.send('hello world')
-})
+var app = express();
+
+app.use(bodyParser.json());
+
+app.post('/login', function (req, res) {
+  res.send('Success')
+});
+
+app.listen(3001, function () {
+  console.log('Example app listening on port 3001!')
+});

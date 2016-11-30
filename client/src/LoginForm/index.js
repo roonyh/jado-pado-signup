@@ -13,15 +13,19 @@ class LoginForm extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleSubmit(e) {
+  async handleSubmit(e) {
     e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      console.log(values);
+    this.props.form.validateFields(async (err, values) => {
       if (!err) {
-        fetch("/login", {
+        const response = await fetch("/login", {
           method: "POST",
-          body: this.state,
+          body: JSON.stringify(values),
+          headers: new Headers({
+            'Content-Type': 'application/json'
+          })
         });
+        const content = await response.text();
+        console.log(content);
       }
     });
   }
