@@ -1,0 +1,11 @@
+{
+  "name": "jadopado-signup",
+  "version": "1.0.0",
+  "description": "A signup form",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aruna Herath <aruna@kadira.io> (http://www.arunaherath.com)",
+  "license": "MIT"
+}
