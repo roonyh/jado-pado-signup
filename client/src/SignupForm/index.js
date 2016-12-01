@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Icon, Input, InputNumber, Button, Checkbox } from 'antd';
+import { Link } from 'react-router';
 const FormItem = Form.Item;
 import './SignupForm.css'
 
@@ -71,7 +72,7 @@ class LoginForm extends Component {
           <Button type="primary" htmlType="submit" className="signup-form-button">
             Sign up
           </Button>
-          Already signed up? <a>Log in!</a>
+          Already signed up? <Link to="/login">Log in!</Link>
         </FormItem>
       </Form>
     );
