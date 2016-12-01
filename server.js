@@ -1,17 +1,33 @@
 const express = require('express');
-const bodyParser = require('body-parser')
-const datalayer = require('./datalayer')
-
+const bodyParser = require('body-parser');
+const passwordHash = require('password-hash');
+const datalayer = require('./datalayer');
 const app = express();
 
 app.use(bodyParser.json());
 
 app.post('/login', function (req, res) {
-  res.send('Success')
+  const user = req.body;
+
+  datalayer.getUser(user.email)
+    .then(savedUser => {
+      const match = passwordHash.verify(user.email + user.password, savedUser.hashedPassword);
+
+      if(match) {
+        res.send('Success');
+      } else {
+        res.send('No match')
+      }
+    })
+    .catch(e => { res.send('Error') })
 });
 
 app.post('/signup', function (req, res) {
   const user = req.body;
+
+  user.hashedPassword = passwordHash.generate(user.email + user.password);
+  delete(user.password)
+
   datalayer.addUser(user)
     .then(() => {
       res.send('Success')

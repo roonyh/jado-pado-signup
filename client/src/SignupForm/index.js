@@ -18,7 +18,7 @@ class LoginForm extends Component {
     e.preventDefault();
     this.props.form.validateFields(async (err, values) => {
       if (!err) {
-        const response = await fetch("/login", {
+        const response = await fetch("/signup", {
           method: "POST",
           body: JSON.stringify(values),
           headers: new Headers({
@@ -57,18 +57,6 @@ class LoginForm extends Component {
           )}
         </FormItem>
         <FormItem>
-          {getFieldDecorator('password', {
-            rules: [{ required: true, message: 'Please repeat your Password!' }],
-          })(
-            <Input addonBefore={<Icon type="lock" />} type="password" placeholder="Password Again" />
-          )}
-        </FormItem>
-        <FormItem>
-          {getFieldDecorator('remember', {
-            valuePropName: 'checked',
-            initialValue: true,
-          })(<div/>
-          )}
           <Button type="primary" htmlType="submit" className="signup-form-button">
             Sign up
           </Button>
