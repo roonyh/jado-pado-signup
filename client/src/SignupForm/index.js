@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, InputNumber, Button, Checkbox } from 'antd';
+import { Form, Icon, Input, Button, Spin } from 'antd';
 import { Link } from 'react-router';
 const FormItem = Form.Item;
 import './SignupForm.css'
@@ -8,8 +8,7 @@ class LoginForm extends Component {
   constructor() {
     super();
     this.state = {
-      username: '',
-      password: '',
+      processing: false,
     }
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -18,6 +17,7 @@ class LoginForm extends Component {
     e.preventDefault();
     this.props.form.validateFields(async (err, values) => {
       if (!err) {
+        this.setState({processing: true})
         const response = await fetch("/signup", {
           method: "POST",
           body: JSON.stringify(values),
@@ -25,8 +25,18 @@ class LoginForm extends Component {
             'Content-Type': 'application/json'
           })
         });
-        const content = await response.text();
-        console.log(content);
+        this.setState({processing: false})
+        if(response.ok) {
+          return;
+        };
+        const content = await response.json();
+        switch (content.error) {
+          case 'EMAIL_EXISTS':
+            // TODO: Show error
+            break;
+          default:
+            console.log(content.error);
+        }
       }
     });
   }
@@ -57,9 +67,11 @@ class LoginForm extends Component {
           )}
         </FormItem>
         <FormItem>
-          <Button type="primary" htmlType="submit" className="signup-form-button">
-            Sign up
-          </Button>
+          <Spin size="small" spinning={ this.state.processing }>
+            <Button type="primary" htmlType="submit" className="signup-form-button">
+              Sign up
+            </Button>
+          </Spin>
           Already signed up? <Link to="/login">Log in!</Link>
         </FormItem>
       </Form>
