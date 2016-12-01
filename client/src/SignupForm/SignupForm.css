@@ -1,9 +1,9 @@
-.login-form {
+.signup-form {
   width: 300px;
 }
 .login-form-forgot {
   float: right;
 }
-.login-form-button {
+.signup-form-button {
   width: 100%;
 }

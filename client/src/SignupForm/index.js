@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import { Form, Icon, Input, InputNumber, Button, Checkbox } from 'antd';
 const FormItem = Form.Item;
-import './LoginForm.css'
+import './SignupForm.css'
 
 class LoginForm extends Component {
   constructor() {
@@ -33,12 +33,19 @@ class LoginForm extends Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
-      <Form onSubmit={this.handleSubmit} className="login-form">
+      <Form onSubmit={this.handleSubmit} className="signup-form">
         <FormItem>
           {getFieldDecorator('email', {
             rules: [{ required: true, message: 'Please input your email!' }],
           })(
             <Input addonBefore={<Icon type="mail" />} placeholder="Email" />
+          )}
+        </FormItem>
+        <FormItem>
+          {getFieldDecorator('name', {
+            rules: [{ required: true, message: 'Please input your name!' }],
+          })(
+            <Input addonBefore={<Icon type="user" />} placeholder="Name" />
           )}
         </FormItem>
         <FormItem>
@@ -49,17 +56,22 @@ class LoginForm extends Component {
           )}
         </FormItem>
         <FormItem>
+          {getFieldDecorator('password', {
+            rules: [{ required: true, message: 'Please repeat your Password!' }],
+          })(
+            <Input addonBefore={<Icon type="lock" />} type="password" placeholder="Password Again" />
+          )}
+        </FormItem>
+        <FormItem>
           {getFieldDecorator('remember', {
             valuePropName: 'checked',
             initialValue: true,
-          })(
-            <Checkbox>Remember me</Checkbox>
+          })(<div/>
           )}
-          <a className="login-form-forgot">Forgot password</a>
-          <Button type="primary" htmlType="submit" className="login-form-button">
-            Log in
+          <Button type="primary" htmlType="submit" className="signup-form-button">
+            Sign up
           </Button>
-          Or <a>register now!</a>
+          Already signed up? <a>Log in!</a>
         </FormItem>
       </Form>
     );
