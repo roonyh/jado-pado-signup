@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Spin } from 'antd';
-import { Link } from 'react-router';
-const FormItem = Form.Item;
+import { Form, Icon, Input, Button, Spin, Select } from 'antd';
+import { Link, withRouter } from 'react-router';
 import './SignupForm.css'
 
-class LoginForm extends Component {
+const FormItem = Form.Item;
+const Option = Select.Option;
+
+class SignupForm extends Component {
   constructor() {
     super();
     this.state = {
@@ -13,6 +15,7 @@ class LoginForm extends Component {
       name: '',
       password: '',
       phone: '',
+      countryCode: '+94',
       emailError: null,
       nameError: null,
       passwordError: null,
@@ -24,6 +27,7 @@ class LoginForm extends Component {
     this.onNameChange = this.onNameChange.bind(this);
     this.onPasswordChange = this.onPasswordChange.bind(this);
     this.onPhoneChange = this.onPhoneChange.bind(this);
+    this.onCountryCodeChange = this.onCountryCodeChange.bind(this);
   }
 
   async handleSubmit(e) {
@@ -37,8 +41,9 @@ class LoginForm extends Component {
       name: this.state.name,
       password: this.state.password,
       phone: this.state.phone,
+      countryCode: this.state.countryCode,
     }
-    this.setState({processing: true})
+    this.setState({processing: true});
     const response = await fetch("/signup", {
       method: "POST",
       body: JSON.stringify(values),
@@ -77,10 +82,13 @@ class LoginForm extends Component {
     const phone = e.target.value;
     this.setState({phone});
   }
+  onCountryCodeChange(countryCode) {
+    this.setState({countryCode});
+  }
 
   onEmailBlur(e) {
     const email = e.target.value;
-    const valid = /.@.\../.test(email);
+    const valid = /\S+@\S+\.\S+/.test(email); // Testing for xxx@xxx.xxx
     if(!valid) {
       this.setState({emailError: 'Sorry, this does not look like an email'})
     }
@@ -88,6 +96,15 @@ class LoginForm extends Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
+
+    const prefixSelector = (
+      <Select value={this.state.countryCode} style={{width: '60px'}} onChange={this.onCountryCodeChange}>
+        <Option value="+1">+1</Option>
+        <Option value="+94">+94</Option>
+        <Option value="+86">+86</Option>
+      </Select>
+    );
+
     return (
       <Form onSubmit={this.handleSubmit} className="signup-form">
         <FormItem
@@ -113,6 +130,17 @@ class LoginForm extends Component {
             onChange={this.onNameChange}
           />
         </FormItem>
+        <FormItem
+          validateStatus={this.state.phoneError ? "error" : null}
+          help={this.state.phoneError ? this.state.phoneError : null}
+        >
+          <Input
+            addonBefore={prefixSelector}
+            placeholder="Phone"
+            value={this.state.phone}
+            onChange={this.onPhoneChange}
+          />
+        </FormItem>
         <FormItem>
           <Input
             addonBefore={<Icon type="lock" />}
@@ -134,4 +162,4 @@ class LoginForm extends Component {
   }
 }
 
-export default Form.create()(LoginForm);
+export default withRouter(Form.create()(SignupForm));

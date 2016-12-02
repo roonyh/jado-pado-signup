@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const session = require('express-session');
 const passwordHash = require('password-hash');
 const datalayer = require('./datalayer');
 const authy = require('./authy');
@@ -12,20 +13,27 @@ app.post('/login', function (req, res) {
 
   datalayer.getUser(user.email)
     .then(savedUser => {
+      if(!user){
+        return null;
+      }
       const match = passwordHash.verify(user.email + user.password, savedUser.hashedPassword);
 
       if(match) {
         return savedUser;
       } else {
-        throw 'Match error'
+        return null;
       }
     })
-    .catch(e => { res.send('Error') })
     .then(user => {
+      if(!user){
+        throw 'NO_USER';
+      }
       return authy.sendToken(user)
     })
-    .catch(e => { console.log(e); res.send('Error') })
-    .then(() => { res.send() })
+    .catch(e => { console.log(e);
+      res.status(400); res.send('Error');
+    })
+    .then(() => { res.send(); })
 });
 
 app.post('/signup', function (req, res) {
