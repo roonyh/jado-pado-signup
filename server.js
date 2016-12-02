@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const passwordHash = require('password-hash');
 const datalayer = require('./datalayer');
+const authy = require('./authy');
 const app = express();
 
 app.use(bodyParser.json());
@@ -14,12 +15,17 @@ app.post('/login', function (req, res) {
       const match = passwordHash.verify(user.email + user.password, savedUser.hashedPassword);
 
       if(match) {
-        res.send('Success');
+        return savedUser;
       } else {
-        res.send('No match')
+        throw 'Match error'
       }
     })
     .catch(e => { res.send('Error') })
+    .then(user => {
+      return authy.sendToken(user)
+    })
+    .catch(e => { console.log(e); res.send('Error') })
+    .then(() => { res.send() })
 });
 
 app.post('/signup', function (req, res) {
@@ -28,13 +34,25 @@ app.post('/signup', function (req, res) {
   user.hashedPassword = passwordHash.generate(user.email + user.password);
   delete(user.password)
 
-  datalayer.addUser(user)
-    .then(() => {
-      res.send('Success')
+  authy.registerUser(user)
+    .then(id => {
+      return id;
     })
     .catch(e => {
-      res.send('Error')
-    });
+      res.status(400);
+      res.json({error: 'AUTHY_ERROR'});
+    })
+    .then(id => {
+      user.authyId = id;
+      return datalayer.addUser(user);
+    })
+    .then(() => {
+      res.send();
+    })
+    .catch(e => {
+      res.status(400);
+      res.json({error: 'EMAIL_EXISTS', existingEmail: user._id});
+    })
 });
 
 datalayer.init()
