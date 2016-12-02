@@ -1,5 +1,5 @@
 module.exports = {
   port: process.env.PORT || 3000,
-  authyApiKey: "7ZK613fxwKO9SoRrk6csznmm8JRUTRbr",
+  authyApiKey: "m3XepId5cuWbiRO3cJEwh12rFS6GZQIc",
   mongoUrl: process.env.MONGOLAB_URI || process.env.MONGO_URL,
 };

@@ -11,6 +11,16 @@ export default class Home extends Component {
       user: null,
     }
     this.checkUser = this.checkUser.bind(this);
+    this.logout = this.logout.bind(this);
+  }
+
+  async logout() {
+    await fetch("/logout", {
+      method: "POST",
+      credentials: 'include',
+      mode: 'cors',
+    });
+    this.setState({ user: null });
   }
 
   async checkUser() {
@@ -42,7 +52,7 @@ export default class Home extends Component {
         <div>This is a single page app built in the test stage of Jado Pado interview process.</div>
         <div>You are logged in now.</div>
         <div>Your name is {this.state.user.name}</div>
-        <div>Not {this.state.user.name}? <a>logout</a></div>
+        <div>Not {this.state.user.name}? <a onClick={this.logout}>logout</a></div>
       </div>
     )
 

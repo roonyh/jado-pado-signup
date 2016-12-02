@@ -90,6 +90,13 @@ function setupRoutes() {
       })
   });
 
+  app.post('/logout', function (req, res) {
+    req.session.destroy(e => {
+      console.log(e);
+      res.send();
+    })
+  });
+
   app.get('/user', function(req, res) {
     const email = req.session.email;
     const verified = req.session.verified;
