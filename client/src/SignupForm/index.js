@@ -55,6 +55,7 @@ class SignupForm extends Component {
     });
     this.setState({processing: false})
     if(response.ok) {
+      this.props.router.push('/login');
       return;
     };
     const content = await response.json();

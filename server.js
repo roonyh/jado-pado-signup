@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 const passwordHash = require('password-hash');
 const datalayer = require('./datalayer');
 const authy = require('./authy');
@@ -30,6 +31,8 @@ function setupRoutes() {
           throw 'NO_USER';
         }
         req.session.authyId = user.authyId;
+        req.session.email = user.email;
+        req.session.verified = false;
         return authy.sendToken(user)
       })
       .catch(e => {
@@ -47,6 +50,7 @@ function setupRoutes() {
 
     authy.verifyToken(authyId, otp)
       .then(v => {
+        req.session.verified = true;
         res.send();
       })
       .catch(e => {
@@ -58,7 +62,6 @@ function setupRoutes() {
 
   app.post('/signup', function (req, res) {
     const user = req.body;
-    user.sessionId = req.session.id;
 
     user.hashedPassword = passwordHash.generate(user.email + user.password);
     delete(user.password)
@@ -76,12 +79,30 @@ function setupRoutes() {
         return datalayer.addUser(user);
       })
       .then(() => {
-        res.session.authyId = user.authyId;
+        req.session.authyId = user.authyId;
+        req.session.email = user.email;
         res.send();
       })
       .catch(e => {
+        console.log(e);
         res.status(400);
         res.json({error: 'EMAIL_EXISTS', existingEmail: user._id});
+      })
+  });
+
+  app.get('/user', function(req, res) {
+    const email = req.session.email;
+    const verified = req.session.verified;
+
+    if(!verified) {
+      res.status(404);
+      res.send();
+      return;
+    }
+
+    datalayer.getUser(email)
+      .then(savedUser => {
+        res.json(savedUser)
       })
   });
 };
@@ -90,7 +111,11 @@ datalayer.init()
   .then(db => {
     // We are not using secure cookies because we dont have https. So just setting secret because
     // its required.
-    app.use(session({secret: 'foo', cookie: { httpOnly: false, secure: false, maxAge: 2000000000 }}));
+    app.use(session({
+      secret: 'foo',
+      cookie: { httpOnly: false, secure: false, maxAge: 2000000000 },
+      store: new MongoStore({ db }),
+    }));
     setupRoutes();
     app.listen(3001, function () {
       console.log('Example app listening on port 3001!')
