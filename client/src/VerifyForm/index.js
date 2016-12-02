@@ -25,6 +25,8 @@ class VerifyForm extends Component {
     const response = await fetch("/verify", {
       method: "POST",
       body: JSON.stringify(values),
+      credentials: 'include',
+      mode: 'cors',
       headers: new Headers({
         'Content-Type': 'application/json'
       })

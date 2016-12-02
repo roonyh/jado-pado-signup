@@ -3,6 +3,7 @@ var MongoClient = require('mongodb').MongoClient
 function init(url='mongodb://localhost:27017/jadopadosignup') {
   return MongoClient.connect(url).then(db => {
     this.db = db;
+    return db;
   });
 }
 

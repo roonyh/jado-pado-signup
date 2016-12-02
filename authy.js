@@ -31,16 +31,16 @@ function sendToken(user) {
   });
 }
 
-function verifyToken(user, otp) {
+function verifyToken(authyId, otp) {
   return new Promise(function (fulfill, reject) {
-    authy.verify(user.authyId, otp, function(err, response) {
+    authy.verify(authyId, otp, function(err, response) {
       if(err){
         reject(err);
         return;
       }
-      fulfill();
+      fulfill(response);
     });
   });
 }
 
-module.exports = { registerUser, sendToken }
+module.exports = { registerUser, sendToken, verifyToken }
