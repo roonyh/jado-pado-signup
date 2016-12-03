@@ -63,6 +63,11 @@ function setupRoutes() {
   app.post('/signup', function (req, res) {
     const user = req.body;
 
+    if(user.name.length < 1 || user.password.length < 6 || user.email.length < 1) {
+      res.status(400);
+      res.json({error: 'INVALID'});
+    }
+
     user.hashedPassword = passwordHash.generate(user.email + user.password);
     delete(user.password)
 
