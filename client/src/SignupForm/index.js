@@ -79,6 +79,11 @@ class SignupForm extends Component {
   }
   onPasswordChange(e) {
     const password = e.target.value;
+    if(password.length < 6) {
+      this.setState({passwordError: 'Need at least 6 characters'})
+    } else {
+      this.setState({passwordError: null})
+    }
     this.setState({password});
   }
   onPhoneChange(e) {
@@ -144,7 +149,10 @@ class SignupForm extends Component {
             onChange={this.onPhoneChange}
           />
         </FormItem>
-        <FormItem>
+        <FormItem
+          validateStatus={this.state.passwordError ? "error" : null}
+          help={this.state.passwordError ? this.state.passwordError : null}
+        >
           <Input
             addonBefore={<Icon type="lock" />}
             type="password"
